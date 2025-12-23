@@ -1,0 +1,29 @@
+00000317    auipc   t1, 0x0
+04830067    jalr    t1, 72(t1)
+ff810113    addi    sp, sp, -8
+00112223    sw      ra, 4(sp)
+00a12023    sw      a0, 0(sp)
+00152293    addi    t0, a0, 1
+00028863    beq     t0, zero, +16
+00100513    li      a0, 1
+00810113    addi    sp, sp, 8
+00008067    ret		jalr x0, 0(ra)
+fff50513    addi    a0, a0, -1
+fddff0ef    jal     ra, -36
+00050313    mv      t1, a0
+00012503    lw      a0, 0(sp)
+00412083    lw      ra, 4(sp)
+00810113    addi    sp, sp, 8
+02650533    mul     a0, a0, t1
+00008067    ret
+00000297    auipc   t0, 0x0
+02428293    addi    t0, t0, 36
+0002a503    lw      a0, 0(t0)
+fb5ff0ef    jal     ra, -72
+00000297    auipc   t0, 0x0
+01428293    addi    t0, t0, 20
+00a2a223    sw      a0, 0(t0)
+000a0513    li      a0, 10
+00000073    ecall
+
+1->2->19->...->22->3->...->7->10->23->...->27

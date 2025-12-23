@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+*Zone.Identifier
+
+# Simulation / build
+*.vcd
+*.log
+mapped.v
+
+# Large runtime images / tools
+nangate/
+image/
+bin/
+lib/
+
+# Zip / submit artifacts
+sub/*.zip
+
+# Others
+others/
+

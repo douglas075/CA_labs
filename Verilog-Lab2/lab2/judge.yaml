@@ -1,0 +1,66 @@
+# Directory of source code
+source:
+  path: code/src
+
+# Directory of supplied code
+supplied:
+  path: code/supplied
+
+tb:
+  path: code/tb
+
+log: 
+  path: log
+
+lib: 
+  path: nangate/NanGate45/lib
+
+# Directory of built code
+# The directory will be created if it does not exist
+# Before judging, the judger will clean the directory
+build:
+  path: build
+
+log:
+  path: log
+# Test case config
+# The judger will find all test cases in the directory
+tasks:
+  path: testcases
+  format:
+    input: instruction_<tasks::format::index>.txt
+    expect: output_<tasks::format::index>.txt
+    index: "[0-9]+"
+
+# Compile config
+# The judger does compilation before judging
+# If the compilation fails, the judger will return a compile error
+setup:
+  timeout: 60
+  commands:
+    - iverilog -g2012 -o cpu  <tb::path>/*.v <supplied::path>/*.v <source::path>/*.v  
+    - yosys -l <log::path>/synth.log -p "
+        read_liberty -lib <lib::path>/NangateOpenCellLibrary_typical.lib;
+        read_verilog <supplied::path>/*.v <source::path>/*.v;
+        hierarchy -top CPU;
+        proc; opt_clean;
+        fsm; opt_clean;
+        techmap; opt_clean;
+        flatten CPU;
+        dfflibmap -liberty <lib::path>/NangateOpenCellLibrary_typical.lib;
+        abc -liberty <lib::path>/NangateOpenCellLibrary_typical.lib;
+        stat -liberty <lib::path>/NangateOpenCellLibrary_typical.lib;
+      "
+
+
+# Judge config
+# For each test case, the judger does judging after execution0
+# If the judging fails, the test case fails
+process:
+  timeout: 60
+  commands:
+    - cp <input> instruction.txt
+    - vvp ./cpu
+    - cp output.txt <log::path>/output_<id>.txt
+    - cp waveform.vcd <log::path>/waveform_<id>.vcd
+    - diff output.txt <expect>
